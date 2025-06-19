@@ -1,126 +1,262 @@
-'use client'; // 這一定要是檔案最頂端，前面不能有註解！
+'use client'
 
-import { useState, useMemo } from "react";
-// 已移除 'lucide-react' 的 import
+import { useState, useEffect, useMemo } from 'react'
 
-// --- 豐富化的假資料 ---
-const allActivities = [
-  { id: 1, title: "校園歌唱比賽", school: "臺灣大學",  type: "competition", date: "2025-10-20", image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop" },
-  { id: 2, title: "程式設計馬拉松", school: "成功大學", type: "competition", date: "2025-11-05", image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" },
-  { id: 3, title: "AI 趨勢講座", school: "清華大學",  type: "activity", date: "2025-09-15", image: "https://images.unsplash.com/photo-1620712943543-2858200f745a?q=80&w=2069&auto=format&fit=crop" },
-  { id: 4, title: "系學會迎新茶會", school: "交通大學",  type: "activity", date: "2025-09-10", image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2070&auto=format&fit=crop" },
-  { id: 5, title: "創業經驗分享", school: "政治大學",  type: "activity", date: "2025-11-22", image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1974&auto=format&fit=crop" },
-  { id: 6, title: "設計思考工作坊", school: "臺灣科技大學",  type: "internship", date: "2025-10-30", image: "https://images.unsplash.com/photo-1587440871875-191322ee64b0?q=80&w=2071&auto=format&fit=crop" },
-  { id: 7, title: "金融科技論壇", school: "輔仁大學",  type: "activity", date: "2025-12-01", image: "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?q=80&w=2089&auto=format&fit=crop" },
-  { id: 8, title: "文學之夜", school: "東吳大學", type: "activity", date: "2025-11-18", image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1973&auto=format&fit=crop" },
-];
-const ITEMS_PER_PAGE = 6;
-
+// ActivityCard 元件
 function ActivityCard({ activity }) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-      <div className="relative">
-        <img src={activity.image} alt={activity.title} className="w-full h-40 object-cover" />
+    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">
+          {activity.Title_Simplified}
+        </h3>
+        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+          {activity.School}
+        </span>
       </div>
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <p className="text-sm font-semibold text-indigo-600">{activity.subject}</p>
+      
+      {activity.Type && (
+        <div className="mb-2">
+          <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+            {activity.Type}
+          </span>
         </div>
-        <div className="mt-3 space-y-2 text-gray-600 text-sm">
-        <h3 className="text-xl font-bold text-gray-800 group-hover:text-indigo-600 transition-colors duration-300">{activity.title}</h3>
-          <p className="text-sm font-semibold text-gray-600">
-          <span role="img" aria-label="tag">🏷️</span>
-          {activity.type}</p>
-          <div className="flex items-center gap-2">
-            <span role="img" aria-label="school">🏫</span>
-            <span>{activity.school}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span role="img" aria-label="calendar">📅</span>
-            <span>{activity.date}</span>
-          </div>
-        </div>
+      )}
+      
+      {activity.Location && (
+        <p className="text-sm text-gray-600 mb-2">
+          <span className="font-medium">地點:</span> {activity.Location}
+        </p>
+      )}
+      
+      {activity.Info && (
+        <p className="text-sm text-gray-600 mb-3">
+          {activity.Info}
+        </p>
+      )}
+      
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-gray-500">
+          {new Date(activity.Post_Date).toLocaleDateString('zh-TW')}
+        </span>
+        {activity.Link && (
+          <a 
+            href={activity.Link} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            查看詳情 →
+          </a>
+        )}
       </div>
     </div>
-  );
+  )
 }
 
+// Pagination 元件
 function Pagination({ currentPage, totalPages, onPageChange }) {
-    if (totalPages <= 1) return null;
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-    return (
-        <nav className="flex justify-center items-center gap-2 mt-8">
-            <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-1 rounded-md bg-white text-gray-700 disabled:opacity-50 hover:bg-indigo-50">&lt;</button>
-            {pageNumbers.map(number => (
-                <button key={number} onClick={() => onPageChange(number)} className={`px-3 py-1 rounded-md ${currentPage === number ? 'bg-indigo-600 text-white font-bold' : 'bg-white text-gray-700 hover:bg-indigo-50'}`}>{number}</button>
-            ))}
-            <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} className="px-3 py-1 rounded-md bg-white text-gray-700 disabled:opacity-50 hover:bg-indigo-50">&gt;</button>
-        </nav>
-    );
+  return (
+    <div className="flex justify-center items-center space-x-2 mt-8">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        上一頁
+      </button>
+      
+      <span className="px-4 py-2 text-sm text-gray-700">
+        第 {currentPage} 頁，共 {totalPages} 頁
+      </span>
+      
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="px-4 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+      >
+        下一頁
+      </button>
+    </div>
+  )
 }
 
-export default function ActivityBoard() {
-  const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState({ school: "", subject: "", type: "" });
-  const [currentPage, setCurrentPage] = useState(1);
+export default function Home() {
+  const [activities, setActivities] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedSchool, setSelectedSchool] = useState('')
+  const [selectedType, setSelectedType] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
-  const filteredActivities = useMemo(() => 
-    allActivities
-      .filter(activity => activity.title.toLowerCase().includes(search.toLowerCase()))
-      .filter(activity => filters.school ? activity.school === filters.school : true)
-      .filter(activity => filters.subject ? activity.subject === filters.subject : true)
-      .filter(activity => filters.type ? activity.type === filters.type : true),
-    [search, filters]
-  );
-  const paginatedActivities = useMemo(() => { const startIndex = (currentPage - 1) * ITEMS_PER_PAGE; return filteredActivities.slice(startIndex, startIndex + ITEMS_PER_PAGE); }, [filteredActivities, currentPage]);
-  const totalPages = Math.ceil(filteredActivities.length / ITEMS_PER_PAGE);
+  // 載入活動資料
+  useEffect(() => {
+    async function fetchActivities() {
+      try {
+        setLoading(true)
+        const response = await fetch('http://localhost:8000/api/events/')
+        if (!response.ok) {
+          throw new Error('無法載入活動資料')
+        }
+        const data = await response.json()
+        setActivities(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const handleFilterChange = (e) => { const { name, value } = e.target; setFilters(prev => ({ ...prev, [name]: value })); setCurrentPage(1); };
-  const clearFilters = () => { setSearch(""); setFilters({ school: "", subject: "", type: "" }); setCurrentPage(1); };
+    fetchActivities()
+  }, [])
 
-  
-  const schoolOptions = useMemo(() => [...new Set(allActivities.map(a => a.school))], []);
-  const subjectOptions = useMemo(() => [...new Set(allActivities.map(a => a.subject))], []);
-  const typeOptions = useMemo(() => [...new Set(allActivities.map(a => a.type))], []);
+  // 取得所有學校清單
+  const schools = useMemo(() => {
+    const uniqueSchools = [...new Set(activities.map(activity => activity.School))]
+    return uniqueSchools.sort()
+  }, [activities])
 
-  return (
-    <main className="p-4 md:p-8 bg-gray-50 min-h-screen font-sans">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <h1 className="text-4xl font-bold text-gray-800">活動總覽</h1>
-          <div className="relative w-full md:w-auto">
-            <input className="border-2 border-gray-200 p-2 pl-10 rounded-lg w-full md:w-72 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition" placeholder="搜尋活動標題..." value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }} />
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
-          </div>
-        </div>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="w-full lg:w-1/4">
-            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-8">
-              <h2 className="text-xl font-semibold mb-4 text-gray-700">篩選條件</h2>
-              <div className="flex flex-col gap-4">              
-                <select name="school" value={filters.school} onChange={handleFilterChange} className="w-full border-gray-300 rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500"><option value="">所有學校</option>{schoolOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>
-                <select name="type" value={filters.type} onChange={handleFilterChange} className="w-full border-gray-300 rounded-md p-2 focus:ring-indigo-500 focus:border-indigo-500"><option value="">公/私立</option><option value="國立">國立</option><option value="私立">私立</option></select>
-                <select
-                  name="type"
-                  value={filters.type}
-                  onChange={handleFilterChange}
-                  className="border px-3 py-2 rounded-md"
-                >
-                  <option value="">所有類別</option>
-                  <option value="activity">一般活動</option>
-                  <option value="internship">實習</option>
-                  <option value="competition">競賽</option>
-                </select>
-                <button onClick={clearFilters} className="mt-2 w-full text-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">清除篩選</button>
-              </div>
-            </div>
-          </aside>
-          <div className="w-full lg:w-3/4">
-            {paginatedActivities.length > 0 ? (<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">{paginatedActivities.map((activity) => (<ActivityCard key={activity.id} activity={activity} />))}</div>) : (<div className="text-center py-16 px-6 bg-white rounded-lg shadow-sm"><h3 className="text-2xl font-semibold text-gray-700">噢喔！</h3><p className="mt-2 text-gray-500">找不到符合條件的活動，試試看其他篩選條件吧！</p></div>)}
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-          </div>
+  // 取得所有類型清單
+  const types = useMemo(() => {
+    const uniqueTypes = [...new Set(activities.map(activity => activity.Type).filter(Boolean))]
+    return uniqueTypes.sort()
+  }, [activities])
+
+  // 篩選活動
+  const filteredActivities = useMemo(() => {
+    return activities.filter(activity => {
+      const matchesSearch = activity.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           activity.Title_Simplified.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (activity.Info && activity.Info.toLowerCase().includes(searchTerm.toLowerCase()))
+      const matchesSchool = selectedSchool === '' || activity.School === selectedSchool
+      const matchesType = selectedType === '' || activity.Type === selectedType
+      
+      return matchesSearch && matchesSchool && matchesType
+    })
+  }, [activities, searchTerm, selectedSchool, selectedType])
+
+  // 分頁計算
+  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedActivities = filteredActivities.slice(startIndex, startIndex + itemsPerPage)
+
+  // 重置分頁當篩選條件改變時
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, selectedSchool, selectedType])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">載入活動資料中...</p>
         </div>
       </div>
-    </main>
-  );
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">錯誤: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            重新載入
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          大學活動總覽
+        </h1>
+
+        {/* 搜尋和篩選區域 */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                搜尋活動
+              </label>
+              <input
+                type="text"
+                placeholder="搜尋活動名稱或描述..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                選擇學校
+              </label>
+              <select
+                value={selectedSchool}
+                onChange={(e) => setSelectedSchool(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">所有學校</option>
+                {schools.map(school => (
+                  <option key={school} value={school}>{school}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                活動類型
+              </label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">所有類型</option>
+                {types.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 text-sm text-gray-600">
+            共找到 {filteredActivities.length} 個活動
+          </div>
+        </div>
+
+        {/* 活動列表 */}
+        {paginatedActivities.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">沒有找到符合條件的活動</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paginatedActivities.map((activity) => (
+                <ActivityCard key={activity.ID} activity={activity} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  )
 }
