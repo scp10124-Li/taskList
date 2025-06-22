@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.custom-button {
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 9999px; /* 圓滑角，等於 Tailwind 的 rounded-full */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: #3b82f6; /* hover 變藍色 (Tailwind 的藍色) */
+}
+
+.custom-button:disabled {
+  background-color: #d1d5db; /* disabled 淺灰色 */
+  cursor: not-allowed;
+}
+
