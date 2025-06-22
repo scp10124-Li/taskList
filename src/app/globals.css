@@ -1,4 +1,4 @@
-@tailwind utilities;
+@import "tailwindcss";
 
 /* --- 新增的未來科技感背景樣式 --- */
 @layer base {
