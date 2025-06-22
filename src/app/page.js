@@ -3,229 +3,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import '../styles/button.css'
 
-const mockActivities = [
-  {
-    ID: 1,
-    Title: '校園音樂會',
-    Title_Simplified: '校園音樂會',
-    School: '雲林科技大學',
-    Type: '音樂',
-    Location: '操場',
-    Info: '全校師生歡迎參加的音樂會',
-    Post_Date: '2025-06-21',
-    Link: 'https://example.com/activity/1',
-  },
-  {
-    ID: 2,
-    Title: '就業博覽會',
-    Title_Simplified: '就業博覽會',
-    School: '台灣大學',
-    Type: '就業',
-    Location: '體育館',
-    Info: '眾多企業參加的就業活動',
-    Post_Date: '2025-06-22',
-    Link: 'https://example.com/activity/2',
-  },
-  {
-    ID: 3,
-    Title: '校園馬拉松',
-    Title_Simplified: '校園馬拉松',
-    School: '成功大學',
-    Type: '運動',
-    Location: '校園各地',
-    Info: '全校性馬拉松比賽',
-    Post_Date: '2025-06-23',
-    Link: 'https://example.com/activity/3',
-  },
-  {
-    ID: 4,
-    Title: '程式設計競賽',
-    Title_Simplified: '程式設計競賽',
-    School: '台北科技大學',
-    Type: '競賽',
-    Location: '資訊館',
-    Info: '跨校程式設計比賽',
-    Post_Date: '2025-06-24',
-    Link: 'https://example.com/activity/4',
-  },
-  {
-    ID: 5,
-    Title: '藝術展覽',
-    Title_Simplified: '藝術展覽',
-    School: '高雄大學',
-    Type: '展覽',
-    Location: '藝術中心',
-    Info: '當代藝術家聯展',
-    Post_Date: '2025-06-25',
-    Link: 'https://example.com/activity/5',
-  },
-  {
-    ID: 6,
-    Title: '校園歌唱比賽',
-    Title_Simplified: '校園歌唱比賽',
-    School: '淡江大學',
-    Type: '比賽',
-    Location: '大禮堂',
-    Info: '展現歌喉的舞台',
-    Post_Date: '2025-06-26',
-    Link: 'https://example.com/activity/6',
-  },
-  {
-    ID: 7,
-    Title: '日文會話工作坊',
-    Title_Simplified: '日文會話工作坊',
-    School: '中山大學',
-    Type: '語言',
-    Location: '外語系館',
-    Info: '免費日文會話練習課程',
-    Post_Date: '2025-06-27',
-    Link: 'https://example.com/activity/7',
-  },
-  {
-    ID: 8,
-    Title: '職涯講座',
-    Title_Simplified: '職涯講座',
-    School: '中央大學',
-    Type: '講座',
-    Location: '商學院演講廳',
-    Info: '邀請企業高管分享職涯經驗',
-    Post_Date: '2025-06-28',
-    Link: 'https://example.com/activity/8',
-  },
-  {
-    ID: 9,
-    Title: '校園市集',
-    Title_Simplified: '校園市集',
-    School: '中正大學',
-    Type: '市集',
-    Location: '校園中庭',
-    Info: '各式美食與手作商品',
-    Post_Date: '2025-06-29',
-    Link: 'https://example.com/activity/9',
-  },
-  {
-    ID: 10,
-    Title: '校友返校日',
-    Title_Simplified: '校友返校日',
-    School: '交通大學',
-    Type: '校慶',
-    Location: '校友會館',
-    Info: '與畢業校友的交流活動',
-    Post_Date: '2025-06-30',
-    Link: 'https://example.com/activity/10',
-  },
-  {
-    ID: 11,
-    Title: '羽球錦標賽',
-    Title_Simplified: '羽球錦標賽',
-    School: '清華大學',
-    Type: '運動',
-    Location: '體育館',
-    Info: '校內羽球競技賽事',
-    Post_Date: '2025-07-01',
-    Link: 'https://example.com/activity/11',
-  },
-  {
-    ID: 12,
-    Title: '校園電影夜',
-    Title_Simplified: '校園電影夜',
-    School: '政治大學',
-    Type: '電影',
-    Location: '草地廣場',
-    Info: '戶外放映經典電影',
-    Post_Date: '2025-07-02',
-    Link: 'https://example.com/activity/12',
-  },
-  {
-    ID: 13,
-    Title: '創業交流會',
-    Title_Simplified: '創業交流會',
-    School: '東華大學',
-    Type: '交流',
-    Location: '創客空間',
-    Info: '分享創業經驗與合作機會',
-    Post_Date: '2025-07-03',
-    Link: 'https://example.com/activity/13',
-  },
-  {
-    ID: 14,
-    Title: '書法比賽',
-    Title_Simplified: '書法比賽',
-    School: '中興大學',
-    Type: '比賽',
-    Location: '文學院大廳',
-    Info: '校內書法愛好者競賽',
-    Post_Date: '2025-07-04',
-    Link: 'https://example.com/activity/14',
-  },
-  {
-    ID: 15,
-    Title: '程式馬拉松',
-    Title_Simplified: '程式馬拉松',
-    School: '台灣科技大學',
-    Type: '競賽',
-    Location: '資工館',
-    Info: '24 小時無間斷的程式挑戰',
-    Post_Date: '2025-07-05',
-    Link: 'https://example.com/activity/15',
-  },
-  {
-    ID: 16,
-    Title: '烘焙工作坊',
-    Title_Simplified: '烘焙工作坊',
-    School: '輔仁大學',
-    Type: '課程',
-    Location: '家政教室',
-    Info: '學習各式甜點製作',
-    Post_Date: '2025-07-06',
-    Link: 'https://example.com/activity/16',
-  },
-  {
-    ID: 17,
-    Title: '校園園遊會',
-    Title_Simplified: '校園園遊會',
-    School: '逢甲大學',
-    Type: '市集',
-    Location: '操場',
-    Info: '多元攤位與舞台表演',
-    Post_Date: '2025-07-07',
-    Link: 'https://example.com/activity/17',
-  },
-  {
-    ID: 18,
-    Title: '手作皮革體驗',
-    Title_Simplified: '手作皮革體驗',
-    School: '中原大學',
-    Type: '工作坊',
-    Location: '工藝教室',
-    Info: '親手製作專屬皮件',
-    Post_Date: '2025-07-08',
-    Link: 'https://example.com/activity/18',
-  },
-  {
-    ID: 19,
-    Title: '志工服務日',
-    Title_Simplified: '志工服務日',
-    School: '亞洲大學',
-    Type: '志工',
-    Location: '社區中心',
-    Info: '校園志工服務社區活動',
-    Post_Date: '2025-07-09',
-    Link: 'https://example.com/activity/19',
-  },
-  {
-    ID: 20,
-    Title: '校園攝影展',
-    Title_Simplified: '校園攝影展',
-    School: '台南大學',
-    Type: '展覽',
-    Location: '圖書館一樓',
-    Info: '學生攝影作品展示',
-    Post_Date: '2025-07-10',
-    Link: 'https://example.com/activity/20',
-  },
-]
-
 // ActivityCard 元件
 function ActivityCard({ activity }) {
   return (
@@ -319,25 +96,25 @@ export default function Home() {
   const itemsPerPage = 12
   
   // 載入活動資料
-  // useEffect(() => {
-  //   async function fetchActivities() {
-  //     try {
-  //       setLoading(true)
-  //       const response = await fetch('http://localhost:8000/api/events/')
-  //       if (!response.ok) {
-  //         throw new Error('無法載入活動資料')
-  //       }
-  //       const data = await response.json()
-  //       setActivities(data)
-  //     } catch (err) {
-  //       setError(err.message)
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
+  useEffect(() => {
+    async function fetchActivities() {
+      try {
+        setLoading(true)
+        const response = await fetch('http://localhost:8000/api/events/')
+        if (!response.ok) {
+          throw new Error('無法載入活動資料')
+        }
+        const data = await response.json()
+        setActivities(data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  //   fetchActivities()
-  // }, [])
+    fetchActivities()
+  }, [])
 
   // 取得所有學校清單
   const schools = useMemo(() => {
@@ -364,9 +141,6 @@ export default function Home() {
     })
   }, [activities, searchTerm, selectedSchool, selectedType])
 
-  useEffect(() => {
-      setActivities(mockActivities)
-  }, [])
 
  // 分頁計算
   const totalPages = Math.ceil(filteredActivities.length / itemsPerPage)
@@ -378,32 +152,32 @@ export default function Home() {
     setCurrentPage(1)
   }, [searchTerm, selectedSchool, selectedType])
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-  //         <p className="text-gray-600">載入活動資料中...</p>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">載入活動資料中...</p>
+        </div>
+      </div>
+    )
+  }
 
-  // if (error) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-  //       <div className="text-center">
-  //         <p className="text-red-600 mb-4">錯誤: {error}</p>
-  //         <button 
-  //           onClick={() => window.location.reload()} 
-  //           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-  //         >
-  //           重新載入
-  //         </button>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">錯誤: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            重新載入
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   
 
